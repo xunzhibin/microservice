@@ -1,0 +1,12 @@
+
+-- 访问令牌
+CREATE TABLE IF NOT EXISTS access_token (
+    token_id CHAR(32) NOT NULL COMMENT '令牌ID',
+    token VARCHAR(255) NOT NULL COMMENT '令牌',
+	t_id INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT '游客ID',
+	u_id INTEGER UNSIGNED NOT NULL COMMENT '用户ID',
+    expire_time INTEGER UNSIGNED NOT NULL DEFAULT 0 COMMENT '到期时间 0表示永久有效',
+	create_time INTEGER UNSIGNED NOT NULL COMMENT '创建时间',
+	PRIMARY KEY (token_id),
+	INDEX (u_id)
+) CHARSET=utf8mb4 COMMENT='访问令牌';

@@ -78,9 +78,11 @@ class Token extends Model
      * @var array
      **/
     protected $type = [
-        'token_id'    => 'integer',// tokenID
-        'unique_id'   => 'integer',// 唯一标识
-        'expire_time' => 'integer',// 到期时间
+        'token_id'    => 'integer', // 令牌ID
+        'token'       => 'string', // 令牌
+        't_id'        => 'integer', // 游客ID
+        'u_id'        => 'integer', // 用户ID
+        'expire_time' => 'integer', // 到期时间
     ];
 
     /**
@@ -120,7 +122,7 @@ class Token extends Model
     }
 
     /**
-     * 新增
+     * 新增(模型)
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
@@ -157,7 +159,73 @@ class Token extends Model
     }
 
     /**
-     * 查询(主键)
+     * 更新(模型)
+     *
+     * @author Alex Xun xunzhibin@jnexpert.com
+     *
+     * @param array $data 更新数据
+     *
+     * @return bool|array
+     */
+    public function getByPkUpdate($data)
+    {
+        // 查询
+        $info = $this->get($data[$this->pk]);
+
+        if(! $info) {
+            // 不存在
+            return false;
+        }
+
+        // 设置 数据
+        $info->t_id = $data['t_id'];
+
+        // 更新
+        $result = $info->save();
+
+        // 返回 更新后数据
+        return $info->toArray();
+    }
+
+    /**
+     * 更新(查询构造器)
+     *
+     * @author Alex Xun xunzhibin@jnexpert.com
+     *
+     * @param array $data 更新数据
+     * @param array $clause SQL子句数据
+     *
+     * @return bool|array
+     */
+    public function getByWhereUpdate($data, $clause)
+    {
+        $this->dbQuery = $this;
+
+        // 循环设置
+        foreach($clause as $method => $row) {
+            // 设置条件
+            $this->setWhere($method, $row);
+        }
+
+        // 查询
+        $info = $this->dbQuery->find();
+        if(! $info) {
+            // 不存在
+            return false;
+        }
+
+        // 设置 数据
+        $info->t_id = $data['t_id'];
+
+        // 更新
+        $result = $info->save();
+
+        // 返回 更新后数据
+        return $info->toArray();
+    }
+
+    /**
+     * 查询(模型)
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
@@ -184,7 +252,38 @@ class Token extends Model
     }
 
     /**
-     * 删除(主键)
+     * 查询(查询构造器)
+     *
+     * @author Alex Xun xunzhibin@jnexpert.com
+     *
+     * @param array $where 查询条件数组
+     * @param bool $is_batch 批量标识
+     *
+     * @return array
+     */
+    public function getByWhere($where, $is_batch = false)
+    {
+        $this->dbQuery = $this;
+
+        // 循环设置
+        foreach($where as $method => $data) {
+            // 设置条件
+            $this->setWhere($method, $data);
+        }
+
+        if($is_batch) {
+            // 批量
+            $result = $this->dbQuery->select();
+        } else {
+            // 单条
+            $result = $this->dbQuery->find();
+        }
+
+        return $result;
+    }
+
+    /**
+     * 删除(模型)
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
@@ -201,7 +300,7 @@ class Token extends Model
     }
 
     /**
-     * 删除
+     * 删除(查询构造器)
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
@@ -220,7 +319,7 @@ class Token extends Model
         }
 
         // 删除
-        $sql = $this->dbQuery->>delete();
+        $sql = $this->dbQuery->delete();
 
         return true;
     }

@@ -40,8 +40,11 @@ class JsonWebToken
             'iss' => 'jnexpert.com',
             'aud' => 'jnexpert.com',
             'jti' => $options['tokenId'],
-            'data' => $options['data']
+            // 'data' => $options['data']
         ];
+        if(isset($options['data'])) {
+            $payload['data'] = $options['data'];
+        }
 
         // 私密密钥
         $key = 'jnexpert.com.key';
@@ -82,6 +85,9 @@ class JsonWebToken
 
         $payload = (array)$object;
 
-        return $payload;
+        return [
+            'tokenId' => $payload['jti'],
+            'data' => isset($payload['data']) ? (array)$payload['data'] : []
+        ];
     }
 }
