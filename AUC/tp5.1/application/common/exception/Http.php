@@ -71,7 +71,7 @@ class Http extends Handle
         } else {
             // 默认
             $this->errCode = 20000009;
-            $this->errMsg = 'Server Error';
+            $this->errMsg = 'server error';
             $this->httpCode = 500;
         }
 
@@ -93,7 +93,7 @@ class Http extends Handle
      */
     protected function RouteNotFoundException($e) {
         $this->errCode = 20000001;
-        $this->errMsg = 'Route Not Found';
+        $this->errMsg = 'not found';
         $this->httpCode = 404;
     }
 
@@ -109,7 +109,7 @@ class Http extends Handle
     protected function ClassNotFoundException($e)
     {
         $this->errCode = 20000002;
-        $this->errMsg = 'Class Not Found';
+        $this->errMsg = 'not found';
         $this->httpCode = 404;
     }
 
@@ -125,7 +125,7 @@ class Http extends Handle
     protected function HttpException($e)
     {
         $this->errCode = 20000003;
-        $this->errMsg = 'Not Found';
+        $this->errMsg = 'not found';
         $this->httpCode = 404;
     }
 
@@ -140,17 +140,17 @@ class Http extends Handle
     protected function ValidateException($e)
     {
         $config = [
-            '20000101' => 'Tourist ID is illegal',
-            '20000102' => 'User ID is illegal',
-            '20000103' => 'Access role not exist',
-            '20000104' => 'Access token not exist',
+            20000101 => 'invalid tourist id',
+            20000102 => 'invalid user id',
+            20000103 => 'invalid access role',
+            20000104 => 'invalid access token',
         ];
 
-        $msg = $e->getMessage();
-        $code = array_search($msg, $config);
+        $code = $e->getMessage();
+        $code = isset($config[$code]) ? $config[$code] : null;
         if(! $code) {
             $code = 20000111;
-            $msg = 'Request validate feiled';
+            $msg = 'request validate fail';
         }
 
         $this->errCode = $code;
@@ -168,7 +168,7 @@ class Http extends Handle
     protected function PDOException($e)
     {
         $this->errCode = 20000004;
-        $this->errMsg = 'Sever Error';
+        $this->errMsg = 'server error';
         $this->httpCode = 500;
     }
 
@@ -182,7 +182,7 @@ class Http extends Handle
     protected function DbException($e)
     {
         $this->errCode = 20000005;
-        $this->errMsg = 'Sever Error';
+        $this->errMsg = 'server error';
         $this->httpCode = 500;
     }
 
@@ -196,7 +196,7 @@ class Http extends Handle
     protected function HttpResponseException($e)
     {
         $this->errCode = 20000006;
-        $this->errMsg = 'Sever Error';
+        $this->errMsg = 'server error';
         $this->httpCode = 500;
     }
 
@@ -210,7 +210,7 @@ class Http extends Handle
     protected function TemplateNotFoundException($e)
     {
         $this->errCode = 20000007;
-        $this->errMsg = 'Sever Error';
+        $this->errMsg = 'server error';
         $this->httpCode = 500;
     }
 
@@ -226,7 +226,7 @@ class Http extends Handle
     protected function ErrorException($e)
     {
         $this->errCode = 20000008;
-        $this->errMsg = 'Sever Error';
+        $this->errMsg = 'server error';
         $this->httpCode = 500;
     }
 

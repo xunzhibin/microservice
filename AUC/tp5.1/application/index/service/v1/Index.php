@@ -79,7 +79,7 @@ class Index
             $token = $this->touristToken($data);
         } else {
             // 异常
-            throw new \think\exception\ValidateException('Access role not exist');
+            throw new \think\exception\ValidateException(20000103);
         }
 
         return $token;

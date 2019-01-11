@@ -42,11 +42,11 @@ class Index extends Validate
      */
     protected $message = [
         // 不合法的游客ID
-        't_id.number' => 'Tourist ID is illegal',
+        't_id.number' => 20000101,
         // 不合法的用户ID
-        'u_id.number' => 'User ID is illegal',
+        'u_id.number' => 20000102,
         // 访问令牌不存在
-        'token.must' => 'Access token not exist',
+        'token.must'  => 20000104,
     ];
 
     /**
