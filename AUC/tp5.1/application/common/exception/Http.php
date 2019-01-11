@@ -53,7 +53,7 @@ class Http extends Handle
      */
     public function render(Exception $e)
     {
-        var_dump(get_class($e), $e);exit;
+        // var_dump(get_class($e), $e);exit;
 
         // 异常类 类名(包含命名空间)
         $class = get_class($e);
@@ -139,8 +139,22 @@ class Http extends Handle
      */
     protected function ValidateException($e)
     {
-        $this->errCode = 20000111;
-        $this->errMsg = '';
+        $config = [
+            '20000101' => 'Tourist ID is illegal',
+            '20000102' => 'User ID is illegal',
+            '20000103' => 'Access role not exist',
+            '20000104' => 'Access token not exist',
+        ];
+
+        $msg = $e->getMessage();
+        $code = array_search($msg, $config);
+        if(! $code) {
+            $code = 20000111;
+            $msg = 'Request validate feiled';
+        }
+
+        $this->errCode = $code;
+        $this->errMsg = $msg;
         $this->httpCode = 422;
     }
 

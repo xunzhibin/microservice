@@ -44,6 +44,7 @@ class Index extends BasicController
         // 父类
         parent::initialize();
 
+		// 实例化 服务层类
         $this->service = new serviceIndex;
     }
 
@@ -56,11 +57,11 @@ class Index extends BasicController
      */
     public function create()
     {
-        $token = $this->service->encode($this->param);
+        $token = $this->service->createToken($this->param);
 
         return [
             'errCode' => 0,
-            'errMsg'  => 'OK',
+            'errMsg'  => '',
             'token'   => $token
         ];
     }
@@ -74,11 +75,11 @@ class Index extends BasicController
      */
     public function read()
     {
-        $data = $this->service->decode($this->param);
+        $data = $this->service->readToken($this->param);
 
         return [
             'errCode' => 0,
-            'errMsg'  => 'OK',
+            'errMsg'  => '',
             'data'    => $data
         ];
     }

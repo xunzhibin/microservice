@@ -1,6 +1,6 @@
 <?php
 /**
- * 访问令牌 模型管理
+ * 访问令牌 模型层 管理
  *
  * @author    Alex Xun xunzhibin@expert.com
  * @version   1.0
@@ -126,14 +126,15 @@ class Token extends Model
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $data 新增数组数据
-     * @param bool $is_batch 是否批量新增
+     * @param array $data 新增数据
+     * @param bool $is_batch 批量标识
      *
      * @return int|bool
      */
     public function add($data, $is_batch = false)
     {
         if(! $data) {
+			// 无新增数据
             throw new ValidateException('Insert data is NULL');
         }
 
@@ -141,14 +142,10 @@ class Token extends Model
         $query = $this->allowField(true);
 
         if($is_batch) {
-            // 批量
-
-            // 添加
+            // 批量添加
             $result = $query->saveAll($data, false);
         } else {
-            // 单条
-
-            // 添加
+            // 单条添加
             $row = $query->save($data);
 
             // 主键
@@ -160,6 +157,8 @@ class Token extends Model
 
     /**
      * 更新(模型)
+     *
+     * 以主键查询信息, 如果存在, 更新变化数据, 返回更新后数据
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
@@ -190,10 +189,12 @@ class Token extends Model
     /**
      * 更新(查询构造器)
      *
+     * 以条件查询信息, 如果存在, 更新变化数据, 返回更新后数据
+     *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
      * @param array $data 更新数据
-     * @param array $clause SQL子句数据
+     * @param array $clause SQL子句
      *
      * @return bool|array
      */
@@ -237,14 +238,10 @@ class Token extends Model
     public function getByPk($pk, $is_batch = false)
     {
         if($is_batch) {
-            // 批量
-
-            // 查询
+            // 批量查询
             $result = $this->all($pk);
         } else {
-            // 单条
-
-            // 查询
+            // 单条查询
             $result = $this->get($pk);
         }
 
@@ -256,19 +253,19 @@ class Token extends Model
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $where 查询条件数组
+     * @param array $clause SQL子句
      * @param bool $is_batch 批量标识
      *
      * @return array
      */
-    public function getByWhere($where, $is_batch = false)
+    public function getByWhere($clause, $is_batch = false)
     {
         $this->dbQuery = $this;
 
         // 循环设置
-        foreach($where as $method => $data) {
+        foreach($clause as $method => $row) {
             // 设置条件
-            $this->setWhere($method, $data);
+            $this->setWhere($method, $row);
         }
 
         if($is_batch) {
@@ -304,18 +301,18 @@ class Token extends Model
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $data
+     * @param array $clause SQL子句
      *
      * @return bool
      */
-    public function removeByWhere($where)
+    public function removeByWhere($clause)
     {
         $this->dbQuery = $this;
 
         // 循环设置
-        foreach($where as $method => $data) {
+        foreach($clause as $method => $row) {
             // 设置条件
-            $this->setWhere($method, $data);
+            $this->setWhere($method, $row);
         }
 
         // 删除
@@ -331,7 +328,7 @@ class Token extends Model
      * @author Alex Xun xunzhibin@jnexpert.com
      *
      * @param string $method 查询构造器方法
-     * @param array $data 条件数据数组
+     * @param array $data 条件信息数组
      */
     protected function setWhere($method, $data)
     {

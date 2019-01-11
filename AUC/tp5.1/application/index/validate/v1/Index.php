@@ -41,10 +41,12 @@ class Index extends Validate
      * @var array
      */
     protected $message = [
-        't_id.number' => '不合法的游客唯一标识',
-        'u_id.check_require' => '不合法的游客唯一标识',
-        'u_id.number' => '不合法的游客唯一标识',
-        'token.must' => '不合法的访问令牌',
+        // 不合法的游客ID
+        't_id.number' => 'Tourist ID is illegal',
+        // 不合法的用户ID
+        'u_id.number' => 'User ID is illegal',
+        // 访问令牌不存在
+        'token.must' => 'Access token not exist',
     ];
 
     /**

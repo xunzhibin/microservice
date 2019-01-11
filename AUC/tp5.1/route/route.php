@@ -24,7 +24,7 @@ return [
 // 永久有效
 Route::group('v1', function (){
     // 授权
-    Route::post('auc', 'index/v1.index/create');
+    Route::post('encode', 'index/v1.index/create');
     // 鉴权
-    Route::get('auc', 'index/v1.index/read');
+    Route::get('decode', 'index/v1.index/read');
 });

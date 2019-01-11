@@ -11,5 +11,5 @@
 return [
     'default_validate' => 'app\\index\\validate\\v1\\Index',
     'default_memory_type' => false,
-    // 'default_memory_type' => 'DB',
+    'default_memory_type' => 'database',
 ];

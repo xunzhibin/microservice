@@ -30,13 +30,31 @@ class Index
     protected $token;
 
     /**
+     * Token 生成信息
+     *
+     * @var array
+     **/
+    protected $options;
+
+    /**
+     * 生成信息存储方式
+     *
+     * @var stirng
+     **/
+    protected $memoryType;
+
+    /**
      * 初始化
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      */
     public function __construct()
     {
+		// 实例化 token服务类
         $this->token = new \app\common\token\JsonWebToken;
+
+		// 默认信息存储方式
+        $this->memoryType = Config::get('v1.default_memory_type');
     }
 
     /**
@@ -44,13 +62,13 @@ class Index
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param  array $data token相关数据数组
+     * @param array $data 生成token信息数组
      *
      * @throws \think\exception\DbException
      *
      * @return string
      */
-    public function encode($data)
+    public function createToken($data)
     {
         // 根据访问角色生成
         if(isset($data['u_id']) && $data['u_id']) {
@@ -72,23 +90,27 @@ class Index
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $data token相关数据数组
+     * @param array $param 解析token信息数组
      *
      * @return array
      */
-    public function decode($data)
+    public function readToken($param)
     {
         // 解析
-        $result = $this->token->decode($data['token']);
+        $result = $this->token->decode($param['token']);
 
-        // 默认 获取token中数据
-        $data = $result['data'];
+        $data = null;
+        // 信息存储在token中
+        if(isset($result['data'])) {
+            $data = $result['data'];
+        }
 
-        // 获取数据
-        if(Config::get('v1.default_memory_type')) {
+        // 其他方式存储信息
+        // if(! $data && Config::get('v1.default_memory_type')) {
+        if(! $data && $this->memoryType) {
             // 方法
-            $method = 'getDataFrom';
-            $method .= ucfirst(Config::get('v1.default_memory_type'));
+            // $method = 'getDataFrom' . ucfirst(Config::get('v1.default_memory_type'));
+            $method = 'getDataFrom' . ucfirst($this->memoryType);
             // 获取
             $data = $this->$method($result);
         }
@@ -101,26 +123,24 @@ class Index
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $data 数据数组
+     * @param array $data 生成token信息数组
      *
      * @return string
      */
     protected function touristToken($data)
     {
-        // token id
-        $snowFlake = new SnowFlake();
-        $tokenId = $snowFlake->generate();
-
-        // 生成
-        $options = [
-            'tokenId' => $tokenId,
+        // 信息
+        $this->options = [
             'data' => [
-                't_id' => $data['t_id']
+                't_id' => (int)$data['t_id'],
+                'u_id' => (int)$data['u_id'],
             ]
         ];
-        $token = $this->token->encode($options);
 
-        return $token;
+        // 生成
+        $token = $this->encode();
+		
+		return $token;
     }
 
     /**
@@ -128,91 +148,97 @@ class Index
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $data 数据数组
-     *
-     * @throws
+     * @param array $data 生成token信息数组
      *
      * @return string
      */
     protected function userToken($data)
     {
-        // token id
-        $snowFlake = new SnowFlake();
-        $tokenId = $snowFlake->generate();
-
-        // 实例化模型
-        $token = new Token;
-
-        if(Config::get('v1.default_memory_type')) {
-            // check 是否已存在
-            $where = [
-                [ 'u_id', $data['u_id'] ]
-            ];
-            $result = $token->getByWhereUpdate($data, [
-                'where' => $where
-            ]);
-
-            if($result) {
-                // 已存在
-                return $result['token'];
-            }
-
-            // 生成
-            $options = [
-                'tokenId' => $tokenId
-            ];
-            $token = $this->token->encode($options);
-
-            // 存储数据
-            // 方法
-            $method = 'addDataTo';
-            $method .= ucfirst(Config::get('v1.default_memory_type'));
-            // 数据
-            $data['tokenId'] = $tokenId;
-            $data['token'] = $token;
-            // 存储
-            if(! $this->$method($data)) {
-                throw new \think\exception\DbException('Adding data to DB failed');
-            }
+        // if(Config::get('v1.default_memory_type')) {
+        if($this->memoryType) {
+            // 其他方式存储信息
+            // $method = 'setDataTo' . ucfirst(Config::get('v1.default_memory_type'));
+            $method = 'setDataTo' . ucfirst($this->memoryType);
+            $token = $this->$method($data);
         } else {
-            // 默认
-            // 生成
-            $options = [
-                'tokenId' => $tokenId,
-                'data' => $data
+            // 默认 信息存储在Token中
+            $this->options = [
+                'data' => [
+                    't_id' => (int)$data['t_id'],
+                    'u_id' => (int)$data['u_id']
+                ]
             ];
-            $token = $this->token->encode($options);
+
+            $token = $this->encode();
         }
 
         return $token;
     }
 
     /**
-     * 将数据添加数据库
+     * 信息存储在数据库(database)中
      *
      * @author Alex Xun xunzhibin@jnexpert.com
      *
-     * @param array $param 添加数据数组
+     * @throws \think\exception\DbException
      *
-     * @return int|boot
+     * @param array $param 存储信息数组
+     *
+     * @return string
      */
-    protected function addDataToDB($param)
+    public function setDataToDatabase($param)
     {
-        // 数据
-        $addData = [
-            'token_id' => $param['tokenId'],
-            'token'    => $param['token'],
-            't_id'     => $param['t_id'],
-            'u_id'     => $param['u_id']
-        ];
-
         // 实例化模型
-        $token = new Token;
+        $tokenModel = new Token;
 
-        // 添加
-        $result = $token->add($addData);
+        // 查询后更新, 返回更新后信息
+        // check 是否已存在
+        $where = [
+            [ 'u_id', $param['u_id'] ]
+        ];
+        $info = $tokenModel->getByWhereUpdate($param, [
+            'where' => $where
+        ]);
 
-        return $result;
+        // 不存在
+        if(! $info) {
+            // 生成
+            $token = $this->encode();
+
+			// 设置数据
+            $param['token_id'] = $this->options['tokenId'];
+            $param['token'] = $token;
+
+            // 添加
+            $result = $tokenModel->add($param);
+            if(! $result) {
+                throw new \think\exception\DbException('Adding data to DB failed');
+            }
+
+            $info['token'] = $token;
+        }
+
+        return $info['token'];
+    }
+
+    /**
+     * 生成 Token
+     *
+     * @author Alex Xun xunzhibin@jnexpert.com
+     *
+     * @return string
+     */
+    protected function encode()
+    {
+        // token id
+        $snowFlake = new SnowFlake();
+        $tokenId = $snowFlake->generate();
+
+        // 生成
+        $this->options['tokenId'] = $tokenId;
+        $token = $this->token->encode($this->options);
+
+        return $token;
     }
 
     /**
@@ -224,7 +250,7 @@ class Index
      *
      * @return array
      */
-    protected function getDataFromDB($param)
+    protected function getDataFromDatabase($param)
     {
         // 实例化模型
         $token = new Token;
