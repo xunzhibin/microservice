@@ -1,0 +1,261 @@
+
+        <html xmlns:v="urn:schemas-microsoft-com:vml"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta http-equiv=Content-Type content="text/html;  
+        charset=utf-8">
+        <style type="text/css">
+            table  
+            {  
+                border-collapse: collapse;
+                border: none;  
+                width: 100%;  
+            }  
+            td  
+            {  
+                border: solid #CCC 1px;  
+            }  
+            .codestyle{
+                word-break: break-all;
+                background:silver;mso-highlight:silver;
+            }
+        </style>
+        <meta name=ProgId content=Word.Document>
+        <meta name=Generator content="Microsoft Word 11">
+        <meta name=Originator content="Microsoft Word 11">
+        <xml><w:WordDocument><w:View>Print</w:View></xml></head>
+        <body><h1>1、全局状态码说明</h1><div style="margin-left:20px;"><table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">状态码</th>
+<th style="text-align: left;">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">20000001</td>
+<td style="text-align: left;">路由(route)未找到</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000002</td>
+<td style="text-align: left;">类(class)不存在</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000003</td>
+<td style="text-align: left;">模块(module)、控制器(controller)、方法(method)不存在，或者非法请求</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000004</td>
+<td style="text-align: left;">PDO异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000005</td>
+<td style="text-align: left;">数据库(database)处理类异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000006</td>
+<td style="text-align: left;">响应(response)异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000007</td>
+<td style="text-align: left;">模版(template)异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000008</td>
+<td style="text-align: left;">系统(PHP/thinkPHP)异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20000009</td>
+<td style="text-align: left;">其他异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20002000</td>
+<td style="text-align: left;">Json Web Token 签名异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20002001</td>
+<td style="text-align: left;">Json Web Token 时间异常</td>
+</tr>
+<tr>
+<td style="text-align: left;">20002001</td>
+<td style="text-align: left;">Json Web Token 过期</td>
+</tr>
+</tbody>
+</table></div><h1>2、鉴权中心</h1><div style="margin-left:20px;"><h2>2.1、授权</h2><div style="margin-left:20px;"><p><strong>简要描述：</strong> </p>
+<ul>
+<li>当前用户第一次浏览页面，赋予游客身份令牌，浏览所有可浏览页面(无权限限制)</li>
+<li>当用户登录后，赋予用户身份令牌，可根据权限浏览相关页面。同时也可以赋予游客身份。</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://auc.xx.com/v1/encode</code></li>
+</ul>
+<p><strong>请求方式：</strong></p>
+<ul>
+<li>POST </li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">t_id</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">int</td>
+<td>游客ID</td>
+</tr>
+<tr>
+<td style="text-align: left;">u_id</td>
+<td style="text-align: left;">否</td>
+<td style="text-align: left;">int</td>
+<td>用户ID</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>游客或用户 二选一</li>
+</ul>
+<p><strong>返回示例</strong></p>
+<ul>
+<li>异常
+<table width='100%' class='codestyle'><pre><code>{
+"errCode": 20000002,
+"errMsg": "not found"
+}</code></pre></table></li>
+</ul>
+<ul>
+<li>
+<p>正常</p>
+<table width='100%' class='codestyle'><pre><code>{
+"errCode": 0,
+"errMsg": "",
+"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJqbmV4cGVydC5jb20iLCJhdWQiOiJqbmV4cGVydC5jb20iLCJqdGkiOjExNDM5NzkxMTM3NDEwMjUyOH0.ATXbM9qRxLxrkJusD368GeJt2NhDNyqGcuqQguQOO0M"
+}</code></pre></table>
+<p><strong>返回参数说明</strong> </p>
+</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">errCode</td>
+<td style="text-align: left;">int</td>
+<td>返回结果状态</td>
+</tr>
+<tr>
+<td style="text-align: left;">errMsg</td>
+<td style="text-align: left;">string</td>
+<td>错误文言</td>
+</tr>
+<tr>
+<td style="text-align: left;">token</td>
+<td style="text-align: left;">sting</td>
+<td>访问令牌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>备注</strong> </p>
+<ul>
+<li>更多返回错误代码请看首页的错误代码描述</li>
+</ul></div><h2>2.2、签权</h2><div style="margin-left:20px;"><p><strong>简要描述：</strong> </p>
+<ul>
+<li>当前用户浏览页面，获取赋予用户身份令牌，将其解析，并将相关信息返回</li>
+</ul>
+<p><strong>请求URL：</strong> </p>
+<ul>
+<li><code>http://auc.xx.com/v1/decode</code></li>
+</ul>
+<p><strong>请求方式：</strong></p>
+<ul>
+<li>GET </li>
+</ul>
+<p><strong>参数：</strong> </p>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">必选</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">token</td>
+<td style="text-align: left;">是</td>
+<td style="text-align: left;">string</td>
+<td>访问令牌</td>
+</tr>
+</tbody>
+</table>
+<p><strong>返回示例</strong></p>
+<ul>
+<li>异常
+<table width='100%' class='codestyle'><pre><code>{
+"errCode": 20000002,
+"errMsg": "not found"
+}</code></pre></table></li>
+</ul>
+<ul>
+<li>
+<p>正常</p>
+<table width='100%' class='codestyle'><pre><code>{
+"errCode": 0,
+"errMsg": "",
+"data":{
+    "t_id": 2,
+    "u_id": 1
+}
+}</code></pre></table>
+<p><strong>返回参数说明</strong> </p>
+</li>
+</ul>
+<table>
+<thead><tr style='background-color: rgb(0, 136, 204); color: rgb(255, 255, 255);'>
+<th style="text-align: left;">参数名</th>
+<th style="text-align: left;">类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">errCode</td>
+<td style="text-align: left;">int</td>
+<td>返回结果状态</td>
+</tr>
+<tr>
+<td style="text-align: left;">errMsg</td>
+<td style="text-align: left;">string</td>
+<td>错误文言</td>
+</tr>
+<tr>
+<td style="text-align: left;">data</td>
+<td style="text-align: left;">array</td>
+<td>相关信息</td>
+</tr>
+<tr>
+<td style="text-align: left;">t_id</td>
+<td style="text-align: left;">int</td>
+<td>游客ID</td>
+</tr>
+<tr>
+<td style="text-align: left;">u_id</td>
+<td style="text-align: left;">int</td>
+<td>用户ID</td>
+</tr>
+</tbody>
+</table>
+<p><strong>备注</strong> </p>
+<ul>
+<li>更多返回错误代码请看首页的错误代码描述</li>
+</ul></div></div></body></html>
